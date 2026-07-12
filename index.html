@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memotest Retro Toons</title>
+
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="css/estilos.css">
+
+</head>
+
+<body>
+    <header>
+        <h1>Memotest Retro Toons</h1>
+        <p>
+            Los dibujos animados más icónicos de los 80 y 90.
+        </p>
+    </header>
+    <main>
+        <div id="contenedor-juego">
+            <section id="configuracion-partida">
+                <h2>Iniciar Partida</h2>
+                <div class="campo">
+                    <label for="nombre-jugador">
+                        Nombre del jugador
+                    </label>
+                    <input type="text" id="nombre-jugador" placeholder="Ingresá tu nombre">
+                </div>
+                <div class="campo">
+                    <p>Dificultad</p>
+                    <label>
+                        <input type="radio" name="dificultad" value="facil">
+                        Fácil
+                    </label>
+                    <label>
+                        <input type="radio" name="dificultad" value="medio">
+                        Medio
+                    </label>
+                    <label>
+                        <input type="radio" name="dificultad" value="dificil">
+                        Difícil
+                    </label>
+                </div>
+                <div id="instrucciones">
+                    <h3>📖 Cómo jugar</h3>
+
+                    <ul>
+                        <li>Encontrá las parejas relacionadas.</li>
+                        <li>Las parejas pertenecen a la misma serie animada.</li>
+                        <li>No necesariamente son personajes iguales.</li>
+                        <li>Cada acierto suma puntos.</li>
+                        <li>Los errores descuentan puntaje.</li>
+                    </ul>
+                </div>
+                <div id="mensaje-error"></div>
+                <button id="btn-iniciar">
+                    🎮 Iniciar Partida
+                </button>
+            </section>
+            <div id="zona-juego" class="oculto">
+                <div id="panel-lateral">
+                    <section id="controles">
+                        <button id="btn-configuracion">
+                            ▶ Configuración
+                        </button>
+                        <button id="btn-reiniciar">
+                            🔄 Reiniciar
+                        </button>
+                        <button id="btn-ranking">
+                            🏆 Ranking
+                        </button>
+                        <button id="btn-tema">
+                            🌙 Modo Claro
+                        </button>
+                        <button id="btn-sonido">
+                            🔊 Sonido ON
+                        </button>
+                        <a href="contacto.html">
+                            📧 Contacto
+                        </a>
+                    </section>
+                    <section id="estadisticas">
+                        <div class="estadistica">
+                            <span>Intentos</span>
+                            <span id="intentos">0</span>
+                        </div>
+                        <div class="estadistica">
+                            <span>Errores</span>
+                            <span id="errores">0</span>
+                        </div>
+                        <div class="estadistica">
+                            <span>Pares</span>
+                            <span id="pares-encontrados">0</span>
+                        </div>
+                        <div class="estadistica">
+                            <span>Puntaje</span>
+                            <span id="puntaje">0</span>
+                        </div>
+                        <div class="estadistica">
+                            <span>Tiempo</span>
+                            <span id="temporizador">00:00</span>
+                        </div>
+                    </section>
+                </div>
+                <section id="panel-juego">
+                    <section id="tablero">
+                        <!-- Generado dinámicamente por JavaScript -->
+                    </section>
+                </section>
+            </div>
+        </div>
+    </main>
+    <!-- MODAL RESULTADO FINAL -->
+    <div id="modal-final" class="modal oculto">
+        <div class="modal-contenido">
+            <h2>¡Ganaste!</h2>
+            <div id="resultado-final"></div>
+            <button id="cerrar-modal-final">
+                ✖ Cerrar
+            </button>
+        </div>
+    </div>
+    <!-- MODAL DATO RETRO -->
+    <div id="modal-retro" class="modal oculto">
+        <div class="modal-contenido">
+            <h2>Dato Retro</h2>
+            <div id="contenido-retro"></div>
+            <button id="cerrar-modal-retro">
+                ▶ Continuar
+            </button>
+        </div>
+    </div>
+    <!-- MODAL RANKING -->
+    <div id="modal-ranking" class="modal oculto">
+        <div class="modal-contenido">
+            <h2>Ranking</h2>
+            <div id="contenido-ranking"></div>
+            <button id="btn-limpiar-ranking">
+                🗑 Limpiar Ranking
+            </button>
+            <button id="cerrar-modal-ranking">
+                ✖ Cerrar
+            </button>
+        </div>
+    </div>
+    <script src="js/datos.js"></script>
+    <script src="js/ranking.js"></script>
+    <script src="js/tema.js"></script>
+    <script src="js/juego.js"></script>
+</body>
+
+</html>
