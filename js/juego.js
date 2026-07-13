@@ -1,8 +1,5 @@
 "use strict";
 
-var nombreJugador = "";
-var dificultadSeleccionada = "";
-
 var tablero = document.getElementById("tablero");
 var panelJuego = document.getElementById("panel-juego");
 var zonaJuego = document.getElementById("zona-juego")
@@ -10,7 +7,6 @@ var panelConfiguracion = document.getElementById("configuracion-partida");
 var modalRetro = document.getElementById("modal-retro");
 var modalFinal = document.getElementById("modal-final");
 var modalRanking = document.getElementById("modal-ranking");
-
 var mensajeError = document.getElementById("mensaje-error");
 var btnIniciar = document.getElementById("btn-iniciar");
 var btnReiniciar = document.getElementById("btn-reiniciar");
@@ -19,8 +15,17 @@ var btnSonido = document.getElementById("btn-sonido");
 var btnCerrarModalFinal = document.getElementById("cerrar-modal-final");
 var btnCerrarModalRetro = document.getElementById("cerrar-modal-retro");
 var btnTema = document.getElementById("btn-tema");
-var sonidoActivo = localStorage.getItem("sonido") !== "off";
+var modalNivel = document.getElementById("modal-nivel");
+var btnSiguienteNivel = document.getElementById("btn-siguiente-nivel");
+var chkModoProgresivo = document.getElementById("modo-progresivo");
+var radiosDificultad = document.getElementsByName("dificultad");
 
+var nombreJugador = "";
+var dificultadSeleccionada = "";
+var sonidoActivo = localStorage.getItem("sonido") !== "off";
+var modoProgresivo = false;
+var nivelesProgresivos = ["facil", "medio", "dificil"];
+var indiceNivelActual = 0;
 var cartasSeleccionadas = [];
 var bloqueoTablero = false;
 var partidaFinalizada = false;
@@ -28,6 +33,7 @@ var paresEncontrados = 0;
 var intentos = 0;
 var errores = 0;
 var puntaje = 0;
+var puntajeBase = 0;
 var tiempoSegundos = 0;
 var temporizador = null;
 var timeoutComparacion = null;
@@ -36,6 +42,11 @@ var sonidoCarta = new Audio("assets/sounds/carta.mp3");
 var sonidoAcierto = new Audio("assets/sounds/acierto.mp3");
 var sonidoError = new Audio("assets/sounds/error.mp3");
 var sonidoVictoria = new Audio("assets/sounds/victoria.mp3");
+var rachaAciertos = 0;
+var rachaErrores = 0;
+var bonusRacha = 0;
+var bonusVelocidad = 0;
+var bonusEficiencia = 0;
 
 btnConfiguracion.classList.add("oculto");
 btnIniciar.addEventListener("click", iniciarPartida);
@@ -44,10 +55,20 @@ btnConfiguracion.addEventListener("click", alternarConfiguracion);
 btnCerrarModalFinal.addEventListener("click", cerrarModalFinal);
 btnCerrarModalRetro.addEventListener("click", cerrarModalRetro);
 btnSonido.addEventListener("click", cambiarEstadoSonido);
+btnSiguienteNivel.addEventListener("click", avanzarNivel);
+chkModoProgresivo.addEventListener("change", manejarModoProgresivo);
+for (var i = 0; i < radiosDificultad.length; i++) {
+    radiosDificultad[i].addEventListener("change", manejarDificultad);
+}
 
 function iniciarPartida() {
     nombreJugador = document.getElementById("nombre-jugador").value.trim();
     dificultadSeleccionada = obtenerDificultadSeleccionada();
+    modoProgresivo = document.getElementById("modo-progresivo").checked;
+    if (modoProgresivo) {
+        indiceNivelActual = 0;
+        dificultadSeleccionada = nivelesProgresivos[indiceNivelActual];
+    }
     if (!validarDatosInicio()) {
         return;
     }
@@ -58,7 +79,7 @@ function iniciarPartida() {
     limpiarEstadoJuego();
     reiniciarEstadisticas();
     reiniciarTemporizador();
-
+    actualizarInformacionModo();
     generarTablero();
 }
 function obtenerDificultadSeleccionada() {
@@ -71,6 +92,65 @@ function obtenerDificultadSeleccionada() {
         }
     }
     return "";
+}
+function mostrarModalNivel() {
+    document.getElementById("mensaje-nivel").innerHTML =
+        "<p><strong>Progreso:</strong> " + (indiceNivelActual + 1) + " de " + nivelesProgresivos.length + "</p>" +
+        "<p><strong>Nivel:</strong> " + obtenerNombreNivel() + "</p>" +
+        "<p><strong>Intentos:</strong> " + intentos + "</p>" +
+        "<p><strong>Errores:</strong> " + errores + "</p>" +
+        "<p><strong>Aciertos:</strong> " + calcularPorcentajeAciertos() + "%</p>" +
+        "<p><strong>Puntaje acumulado:</strong> " + puntaje + "</p>";
+    modalNivel.classList.remove("oculto");
+}
+function avanzarNivel() {
+    modalNivel.classList.add("oculto");
+    indiceNivelActual++;
+    dificultadSeleccionada = nivelesProgresivos[indiceNivelActual];
+    actualizarInformacionModo();
+    cartasSeleccionadas = [];
+    bloqueoTablero = false;
+    paresEncontrados = 0;
+    tablero.innerHTML = "";
+    generarTablero();
+    actualizarEstadisticas();
+}
+function manejarModoProgresivo() {
+    var i;
+    if (!chkModoProgresivo.checked) {
+        return;
+    }
+    for (i = 0; i < radiosDificultad.length; i++) {
+        radiosDificultad[i].checked = false;
+    }
+}
+function manejarDificultad() {
+    chkModoProgresivo.checked = false;
+}
+function actualizarInformacionModo() {
+    var textoModo;
+    var textoNivel;
+    if (modoProgresivo) {
+        textoModo = "Progresivo";
+    } else {
+        textoModo = "Normal";
+    }
+    if (dificultadSeleccionada === "") {
+        textoNivel = "-";
+    } else {
+        textoNivel = obtenerNombreNivel();
+    }
+    document.getElementById("modo-actual").textContent = textoModo;
+    document.getElementById("nivel-actual").textContent = textoNivel;
+}
+function obtenerNombreNivel() {
+    if (dificultadSeleccionada === "facil") {
+        return "Fácil";
+    }
+    if (dificultadSeleccionada === "medio") {
+        return "Medio";
+    }
+    return "Difícil";
 }
 function alternarConfiguracion() {
     panelConfiguracion.classList.toggle("configuracion-colapsada");
@@ -105,13 +185,11 @@ function actualizarBotonSonido() {
 }
 function validarDatosInicio() {
     if (nombreJugador.length < 3) {
-        mensajeError.textContent =
-            "El nombre debe tener al menos 3 caracteres.";
+        mensajeError.textContent = "El nombre debe tener al menos 3 caracteres.";
         return false;
     }
-    if (dificultadSeleccionada === "") {
-        mensajeError.textContent =
-            "Debés seleccionar una dificultad.";
+    if (!modoProgresivo && dificultadSeleccionada === "") {
+        mensajeError.textContent = "Debés seleccionar una dificultad.";
         return false;
     }
     return true;
@@ -199,6 +277,16 @@ function verificarPareja() {
         cartaDos.classList.add("carta-correcta");
         paresEncontrados++;
         puntaje += 100;
+        puntajeBase += 100;
+
+        rachaAciertos++;
+        rachaErrores = 0;
+
+        if (rachaAciertos >= 2) {
+
+            bonusRacha +=
+                (rachaAciertos - 1) * 20;
+        }
         if (paresEncontrados === obtenerCantidadParesNivel()) {
             partidaFinalizada = true;
         }
@@ -206,8 +294,10 @@ function verificarPareja() {
         mostrarDatoRetro(idUno, idDos);
     } else {
         errores++;
+        rachaErrores++;
+        rachaAciertos = 0;
         reproducirSonido(sonidoError);
-        puntaje -= obtenerPenalizacion();
+        puntaje -= obtenerPenalizacion() * rachaErrores;
         cartaUno.classList.add("carta-error");
         cartaDos.classList.add("carta-error");
         setTimeout(function () {
@@ -231,11 +321,40 @@ function sonPareja(idUno, idDos) {
     }
     return false;
 }
+function calcularBonusVelocidad() {
+    if (tiempoSegundos <= 120) {
+        return 300;
+    }
+    if (tiempoSegundos <= 240) {
+        return 150;
+    }
+    return 0;
+}
+function calcularBonusEficiencia() {
+    var porcentaje;
+    porcentaje =
+        calcularPorcentajeAciertos();
+    if (porcentaje >= 90) {
+        return 300;
+    }
+    if (porcentaje >= 75) {
+        return 150;
+    }
+    return 0;
+}
 function reiniciarEstadisticas() {
     intentos = 0;
     errores = 0;
     paresEncontrados = 0;
     puntaje = 0;
+    rachaAciertos = 0;
+    rachaErrores = 0;
+
+    bonusRacha = 0;
+    bonusVelocidad = 0;
+    bonusEficiencia = 0;
+
+    puntajeBase = 0;
     actualizarEstadisticas();
 }
 function reiniciarTemporizador() {
@@ -256,6 +375,7 @@ function actualizarEstadisticas() {
     document.getElementById("errores").textContent = errores;
     document.getElementById("pares-encontrados").textContent = paresEncontrados;
     document.getElementById("puntaje").textContent = puntaje;
+    document.getElementById("porcentaje-aciertos").textContent = calcularPorcentajeAciertos() + "%";
 }
 function actualizarTemporizador() {
 
@@ -330,34 +450,40 @@ function obtenerCantidadParesNivel() {
     return 18;
 }
 function finalizarPartida() {
-    puntaje += 300;
+    bonusVelocidad = calcularBonusVelocidad();
+    bonusEficiencia = calcularBonusEficiencia();
+    puntaje += bonusRacha;
+    puntaje += bonusVelocidad;
+    puntaje += bonusEficiencia;
     reproducirSonido(sonidoVictoria);
     clearInterval(temporizador);
     actualizarEstadisticas();
     guardarResultadoRanking();
     mostrarResultadoFinal();
 }
+function calcularPorcentajeAciertos() {
+    if (intentos === 0) {
+        return 0;
+    }
+    return Math.round(((intentos - errores) / intentos) * 100);
+}
 function mostrarResultadoFinal() {
-
     var resultado;
-
     resultado =
         "<p><strong>Jugador:</strong> " + nombreJugador + "</p>" +
         "<p><strong>Dificultad:</strong> " + dificultadSeleccionada + "</p>" +
         "<p><strong>Intentos:</strong> " + intentos + "</p>" +
         "<p><strong>Errores:</strong> " + errores + "</p>" +
+        "<p><strong>Aciertos:</strong> " + calcularPorcentajeAciertos() + "%</p>" +
         "<p><strong>Pares encontrados:</strong> " + paresEncontrados + "</p>" +
-        "<p><strong>Tiempo:</strong> " +
-        document.getElementById("temporizador").textContent +
-        "</p>" +
+        "<p><strong>Tiempo:</strong> " + document.getElementById("temporizador").textContent + "</p>" +
+        "<p><strong>Puntaje Base:</strong> " + puntajeBase + "</p>" +
+        "<p><strong>Bonus Racha:</strong> +" + bonusRacha + "</p>" +
+        "<p><strong>Bonus Velocidad:</strong> +" + bonusVelocidad + "</p>" +
+        "<p><strong>Bonus Eficiencia:</strong> +" + bonusEficiencia + "</p>" +
         "<p><strong>Puntaje Final:</strong> " + puntaje + "</p>";
-
-    document.getElementById("resultado-final").innerHTML =
-        resultado;
-
-    document
-        .getElementById("modal-final")
-        .classList.remove("oculto");
+    document.getElementById("resultado-final").innerHTML = resultado;
+    document.getElementById("modal-final").classList.remove("oculto");
 }
 function cerrarModalFinal() {
 
@@ -366,6 +492,11 @@ function cerrarModalFinal() {
         .classList.add("oculto");
 }
 function reiniciarPartida() {
+    if (modoProgresivo) {
+        indiceNivelActual = 0;
+        dificultadSeleccionada =nivelesProgresivos[indiceNivelActual];
+        actualizarInformacionModo();
+    }
     limpiarEstadoJuego();
     reiniciarEstadisticas();
     reiniciarTemporizador();
@@ -411,7 +542,12 @@ function cerrarModalRetro() {
     modalRetro.classList.add("oculto");
     if (partidaFinalizada) {
         partidaFinalizada = false;
-        finalizarPartida();
+        if (modoProgresivo && indiceNivelActual < nivelesProgresivos.length - 1
+        ) {
+            mostrarModalNivel();
+        } else {
+            finalizarPartida();
+        }
         return;
     }
     bloqueoTablero = false;

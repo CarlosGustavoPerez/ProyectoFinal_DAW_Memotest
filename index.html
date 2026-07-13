@@ -44,6 +44,12 @@
                         Difícil
                     </label>
                 </div>
+                <div class="campo">
+                    <label>
+                        <input type="checkbox" id="modo-progresivo">
+                        Modo progresivo (Fácil → Medio → Difícil)
+                    </label>
+                </div>
                 <div id="instrucciones">
                     <h3>📖 Cómo jugar</h3>
 
@@ -84,12 +90,26 @@
                     </section>
                     <section id="estadisticas">
                         <div class="estadistica">
+                            <span>Modo</span>
+                            <span id="modo-actual">Normal</span>
+                        </div>
+
+                        <div class="estadistica">
+                            <span>Nivel</span>
+                            <span id="nivel-actual">-</span>
+                        </div>
+
+                        <div class="estadistica">
                             <span>Intentos</span>
                             <span id="intentos">0</span>
                         </div>
                         <div class="estadistica">
                             <span>Errores</span>
                             <span id="errores">0</span>
+                        </div>
+                        <div class="estadistica">
+                            <span>Aciertos</span>
+                            <span id="porcentaje-aciertos">0%</span>
                         </div>
                         <div class="estadistica">
                             <span>Pares</span>
@@ -143,6 +163,16 @@
             </button>
             <button id="cerrar-modal-ranking">
                 ✖ Cerrar
+            </button>
+        </div>
+    </div>
+    <!-- MODAL NIVEL -->
+    <div id="modal-nivel" class="modal oculto">
+        <div class="modal-contenido">
+            <h2>🎉 Nivel Completado</h2>
+            <div id="mensaje-nivel"></div>
+            <button id="btn-siguiente-nivel">
+                ▶ Siguiente Nivel
             </button>
         </div>
     </div>

@@ -164,6 +164,10 @@ main {
     margin-bottom: 15px;
 }
 
+.modal p {
+    padding: 5px;
+}
+
 button {
     background-color: #00e5ff;
     border: none;
@@ -179,11 +183,12 @@ button:hover {
     background-color: #00bcd4;
 }
 
+/* 
 #btn-configuracion {
     margin-bottom: 10px;
     width: 100%;
 }
-
+ */
 
 #estadisticas {
     display: flex;
@@ -513,12 +518,83 @@ button:hover {
 @media screen and (max-width: 900px) {
 
     #contenedor-juego,
-    #ranking-columnas {
+    #ranking-columnas,
+    #zona-juego {
         flex-direction: column;
     }
 
     #configuracion-partida,
-    #panel-juego {
+    #panel-juego,
+    #panel-lateral {
         width: 100%;
+    }
+
+    #controles ,
+    #estadisticas {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .estadistica , 
+    #controles button,
+    #controles a {
+        flex: 1 1 180px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .carta {
+        width: 90px;
+        height: 120px;
+    }
+
+    .carta img {
+        width: 55px;
+        height: 55px;
+    }
+
+    .estadistica {
+        padding: 10px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .carta {
+        width: 75px;
+        height: 105px;
+    }
+
+    .carta img {
+        width: 45px;
+        height: 45px;
+    }
+
+    .carta-nombre {
+        font-size: 0.75rem;
+    }
+
+    .carta-serie {
+        font-size: 0.6rem;
+    }
+
+    #controles {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    #controles button,
+    #controles a,
+    .estadistica {
+        flex: 1 1 calc(50% - 10px);
     }
 }

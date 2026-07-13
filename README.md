@@ -31,7 +31,8 @@ La propuesta combina entretenimiento con contenido cultural mediante la sección
 ## ✨ Características
 
 - ✅ Tres niveles de dificultad.
-- ✅ Sistema de puntajes.
+- ✅ Modo progresivo entre niveles.
+- ✅ Sistema avanzado de puntaje.
 - ✅ Temporizador de partida.
 - ✅ Ranking persistente mediante LocalStorage.
 - ✅ Datos Retro al descubrir parejas.
@@ -39,7 +40,7 @@ La propuesta combina entretenimiento con contenido cultural mediante la sección
 - ✅ Sonido configurable.
 - ✅ Formulario de contacto.
 - ✅ Persistencia de preferencias de usuario.
-- ✅ Diseño responsive.
+- ✅ Diseño responsive para escritorio, tablet y dispositivos móviles.
 
 ---
 
@@ -54,6 +55,7 @@ La propuesta combina entretenimiento con contenido cultural mediante la sección
 - Al encontrar una pareja se mostrará un Dato Retro sobre la serie.
 - Completá todas las parejas para ganar la partida.
 - Intentá obtener el mejor puntaje y aparecer en el ranking.
+- También es posible jugar en Modo Progresivo, avanzando automáticamente entre los niveles Fácil, Medio y Difícil.
 
 ---
 
@@ -73,23 +75,80 @@ La propuesta combina entretenimiento con contenido cultural mediante la sección
 
 ---
 
-## 🏆 Sistema de puntaje
+## 🚀 Modo Progresivo
 
-### Pareja correcta
+El jugador puede completar una campaña compuesta por:
+
+- Fácil
+- Medio
+- Difícil
+
+Al completar un nivel se accede automáticamente al siguiente.
+
+Durante toda la partida se mantienen acumulados:
+
+- Puntaje
+- Intentos
+- Errores
+- Porcentaje de aciertos
+
+Al finalizar cada nivel se muestra un resumen con las estadísticas obtenidas.
+
+La partida finaliza al completar el nivel Difícil.
+
+---
+
+## 🏆 Sistema de Puntaje
+
+### Puntaje Base
+
+Cada pareja encontrada suma:
 
 +100 puntos
 
-### Bonus de victoria
-
-+300 puntos
-
 ### Penalización por error
 
-| Dificultad | Penalización |
+| Dificultad | Penalización Base |
 |------------|-------------|
 | Fácil | -10 |
 | Medio | -20 |
 | Difícil | -30 |
+
+### Bonus por Racha
+
+Los aciertos consecutivos generan bonificaciones acumulativas.
+
+Ejemplo:
+
+- 2 aciertos seguidos → +20
+- 3 aciertos seguidos → +40
+- 4 aciertos seguidos → +60
+
+### Penalización Progresiva
+
+Los errores consecutivos incrementan la penalización aplicada según la dificultad seleccionada.
+
+### Bonus por Velocidad
+
+- Menos de 2 minutos → +300 puntos
+- Menos de 4 minutos → +150 puntos
+
+### Bonus por Eficiencia
+
+Según el porcentaje de aciertos:
+
+- 90% o más → +300 puntos
+- 75% o más → +150 puntos
+
+### Resultado Final
+
+El puntaje final se calcula combinando:
+
+- Puntaje base
+- Bonus por racha
+- Bonus por velocidad
+- Bonus por eficiencia
+- Penalizaciones acumuladas
 
 ---
 
@@ -97,17 +156,19 @@ La propuesta combina entretenimiento con contenido cultural mediante la sección
 
 El sistema almacena automáticamente las partidas utilizando LocalStorage.
 
-El ranking se organiza por dificultad:
-
-- 🥇 Primer puesto
-- 🥈 Segundo puesto
-- 🥉 Tercer puesto
+El ranking se organiza por dificultad y muestra los 10 mejores resultados de cada categoría.
 
 Mostrando:
 
 - Nombre del jugador
 - Puntaje
 - Tiempo
+
+Los tres primeros puestos se destacan con:
+
+- 🥇 Primer puesto
+- 🥈 Segundo puesto
+- 🥉 Tercer puesto
 
 ---
 
@@ -147,15 +208,19 @@ Esta funcionalidad busca reforzar la temática retro del proyecto.
 - Generación dinámica del tablero según dificultad.
 - Validación de nombre y dificultad.
 - Comparación automática de parejas.
-- Sistema de puntaje.
+- Sistema avanzado de puntaje.
+- Modo progresivo entre niveles.
 - Temporizador de partida.
 - Ranking persistente con LocalStorage.
 - Configuración colapsable.
 - Modo claro y oscuro.
 - Sonido configurable.
+- Persistencia de preferencias del usuario.
 - Datos Retro con información histórica.
 - Modal de resultado final.
+- Resumen de nivel completado.
 - Página de contacto.
+- Diseño responsive para escritorio, tablet y dispositivos móviles.
 
 ---
 
@@ -173,12 +238,20 @@ Esta funcionalidad busca reforzar la temática retro del proyecto.
 ```text
 ProyectoFinal_DAW_Memotest
 │
-├── index.html
-├── contacto.html
+├── assets
+│   ├── img
+│   └── sounds
 │
 ├── css
 │   ├── reset.css
 │   └── estilos.css
+│
+├── docs
+│   ├── dato-retro.png
+│   ├── inicio.png
+│   ├── juego.png
+│   ├── ranking.png
+│   └── resultado-final.png
 │
 ├── js
 │   ├── datos.js
@@ -187,12 +260,33 @@ ProyectoFinal_DAW_Memotest
 │   ├── tema.js
 │   └── contacto.js
 │
-├── assets
-│   ├── images
-│   └── sounds
-│
+├── index.html
+├── contacto.html
 └── README.md
 ```
+
+---
+## 📸 Capturas de pantalla
+
+### Pantalla inicial
+
+![Pantalla inicial](docs/inicio.png)
+
+### Partida en curso
+
+![Partida en curso](docs/juego.png)
+
+### Datos Retro
+
+![Datos Retro](docs/dato-retro.png)
+
+### Ranking
+
+![Ranking](docs/ranking.png)
+
+### Resultado final
+
+![Resultado final](docs/resultado-final.png)
 
 ---
 
@@ -216,13 +310,13 @@ en cualquier navegador moderno.
 
 ## 🔗 Repositorio
 
-https://github.com/CarlosGustavoPerez/ProyectoFinal_DAW_Memotest
+[Repositorio GitHub](https://github.com/CarlosGustavoPerez/ProyectoFinal_DAW_Memotest)
 
 ---
 
 ## 🌐 GitHub Pages
 
-Pendiente de publicación.
+[GitHub Pages](https://carlosgustavoperez.github.io/ProyectoFinal_DAW_Memotest/)
 
 ---
 
